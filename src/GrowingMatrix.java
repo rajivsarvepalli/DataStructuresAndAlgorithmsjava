@@ -1,11 +1,22 @@
-
+import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 /**
+@author Rajiv Sarvepalli
 Growing Matrix - a matrix that supports growing in negative and positive directions <br> 
 Features - a pointer to point to value that updates to continue to point to the same value <br>
--a factor to multiply how much the matrix is growing by   
+-a factor to multiply how much the matrix is growing by <br>
+-implements Iterable to return each element of its matrix <br>
+-find and findAll methods to find Item i (either first or all instances) <br>
+-trim method to trim all extra added length <br>
+-get copy of matrix method to return copy of matrix used in GrowingMatrix <br>
+-get method to get Item at indexes i, j and method to get multiple Items given multiple indexes <br> 
+-get size method to get size of matrix <br>
+-equals and clone are implemented, equals just checks if matrixes, pointers, and growthFactor are equal <br>
+-optional equals method is implemented that ignores pointer and one that ignores growthFactor and pointer
 */
-public class GrowingMatrix<Item>{
+public class GrowingMatrix<Item> implements Iterable<Item>{
 	//grows in any way you want (negative too) 
 	private Item[][] matrix;
 	private double growthFactor;
@@ -63,7 +74,8 @@ public class GrowingMatrix<Item>{
 	/**
 	Adds an item at the specified indices given to the matrix.
 	The Matrix fills all empty slots with null.
-	Int i and Int j can be negative and bigger than matrix
+	Int i and Int j can be negative and bigger than matrix <br>
+	Note: This does not insert elements if indexes are within matrix's bounds, it sets them
 	@param The Item i to add, the indices to which it goes
 	@return void
 	*/
@@ -137,9 +149,11 @@ public class GrowingMatrix<Item>{
 	/**
 	Adds an items at the specified indices given to the matrix.
 	The Matrix fills all empty slots with null.
-	indices inside ind can be negative and bigger than matrix
-	@param array items - 1D array of items to add
-	@param matrix ind - 2D array
+	Indices inside ind can be negative and bigger than matrix <br>
+	Note: This does not insert elements if indexes are within matrix's bounds, it sets them
+	@param items - 1D array of items to add
+	@param ind - 2D array of indexes in format {{1, 2}, {0, 0}}
+	which indexes row 1 column 2 and row 0 column 0
 	@return void
 	*/
 	public void addItems(Item[] items,int[][] ind){
@@ -154,13 +168,67 @@ public class GrowingMatrix<Item>{
 		}
 	}
 	/**
-	Compares two GrowingMatrix and tells if matrix are equals
-	Note: does not check pointers, growthFactor or anything else
+	 A private Iterator class to return the elemnt of matrix in order 
+	 */
+	private class GrowingMatrixIterator implements Iterator<Item> {
+        int i = 0;
+        int j=0;
+        public boolean hasNext() {
+            if (i < matrix.length&j<matrix[0].length) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        public Item next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            if(j==matrix[0].length-1){
+            	i++;
+            	j=0;
+            	return matrix[i-1][matrix[0].length-1];
+            }
+            return matrix[i][j++];
+        }
+    }
+	/**
+	 Iterator method to return each item of the matrix that composes the GrowingMatrix 
+	 */
+	public Iterator<Item> iterator() {
+        return new GrowingMatrixIterator();
+    }
+	/**
+	Compares two GrowingMatrix and tells if they are equals
+	Note: does check pointers and growthFactor too (matrix obviously)
 	@param Object o to compare to
 	@return true if equal, false if not
 	@throws If object o is not a GrowingMatrix
 	*/
 	public boolean equals(Object o){
+		GrowingMatrix<Item> other = (GrowingMatrix<Item>)o;
+		return Arrays.deepEquals(other.getMatrix(), this.matrix)&&Arrays.equals(this.pointer, other.getPointer())
+				&&this.growthFactor==other.getGrowthFactor();
+	}
+	/**
+	Compares two GrowingMatrix and tells if they are equals (compares growthFactor and matrix)
+	Note: does not check pointers 
+	@param Object o to compare to
+	@return true if equal, false if not
+	@throws If object o is not a GrowingMatrix
+	*/
+	public boolean equalsWithoutPointer(Object o){
+		GrowingMatrix<Item> other = (GrowingMatrix<Item>)o;
+		return Arrays.deepEquals(other.getMatrix(), this.matrix)&&this.growthFactor==other.getGrowthFactor();
+	}
+	/**
+	Compares two GrowingMatrix and tells if they are equals (compares just matrix)
+	Note: does not check pointer or growthFactor
+	@param Object o to compare to
+	@return true if equal, false if not
+	@throws If object o is not a GrowingMatrix
+	*/
+	public boolean equalsWithoutPointerAndGrowthFactor(Object o){
 		GrowingMatrix<Item> other = (GrowingMatrix<Item>)o;
 		return Arrays.deepEquals(other.getMatrix(), this.matrix);
 	}
@@ -176,9 +244,40 @@ public class GrowingMatrix<Item>{
 		}
 		return new GrowingMatrix<Item>(matrix,this.growthFactor);
 	}
+	/**
+	Gets the matrix probably won't outside class
+	@param void
+	@return the matrix inside GrowingMatrix
+	*/
 	protected Item[][] getMatrix(){
 		//Don't use because the matrix was soft casted and being accessed outside of class will mess it up
 		return this.matrix;
+	}
+	//gets growthFactor just used for equals method
+	protected double getGrowthFactor(){
+		return this.growthFactor;
+	}
+	/**
+	Gets a copy of the matrix inside GrowingMatrix <br>
+	Works outside of this class
+	@param the class of Item you have used when instantiating this GrowingMatrix
+	@return a copy of the matrix inside GrowingMatrix
+	*/
+	public Item[][] getCopyOfMatrix(Class<? extends Item> cls){
+		final Item[][] matrix = (Item[][]) Array.newInstance(cls,this.size[0],this.size[1]);
+        int a=0;
+        int b=0;
+		for(Item i: this){
+			if(b<this.size[1]){
+				matrix[a][b++] = i;
+			}
+			if(b==this.size[0]){
+				b=0;
+				a++;
+			}
+		}
+		return matrix;
+			
 	}
 	/**
 	Get size of matrix in GrowingMatrix
@@ -187,6 +286,49 @@ public class GrowingMatrix<Item>{
 	*/
 	public int[] getSize(){
 		return this.size;
+	}
+	/**
+	Get Item i of at index index
+	@param index - a 1D array like {1,3} to get row 1 and column 3 (start at 0)
+	@return gets the Item at specified indexes
+	@throws indexes must be less than matrix's respective lengths
+	*/
+	public Item get(int[] index){
+		if(index.length!=2){
+			throw new IllegalArgumentException("length of ind must be 2");
+		}
+		return this.matrix[index[0]][index[1]];
+	}
+	/**
+	Get all Items of at the specified indexes
+	@param indexes - a 2D array like {{1,3}{2,3} to get row 1 and column 3 and row 2 and column 3 (start at 0)
+	@return gets the Item at specified indexes
+	@throws indexes must be less than matrix's respective lengths
+	*/
+	public Item[] get(int[][] indexes){
+		if(indexes[0].length!=2){
+			throw new IllegalArgumentException("length of ind must be 2");
+		}
+		final Item[] items = (Item[]) Array.newInstance(this.matrix[0][0].getClass(),indexes.length);
+		for(int r=0;r<indexes.length;r++){
+			items[r] = this.matrix[indexes[r][0]][indexes[r][1]];
+		}
+		return items;
+	}
+	/**
+	Sets all null items to some Item i
+	@param void
+	@return void
+	@throws Item i must be of type Item
+	*/
+	public void setAllNullTo(Item i){
+		for(int r= 0;r<this.matrix.length;r++){
+			for(int j=0;j<this.matrix[0].length;j++){
+				if(this.matrix[r][j]==null){
+					this.matrix[r][j] = i;
+				}
+			}
+		}
 	}
 	/**
 	Sets a pointer (indexes of matrix in map)
@@ -205,13 +347,62 @@ public class GrowingMatrix<Item>{
 	}
 	/**
 	Returns a pointer if it was initialized earlier to point to the same value
-	as it intially pointed to.
+	as it initially pointed to.
 	@param None
 	@return pointer, a 1D array of two values (indexes of matrix)
 	@throws if pointer was null
 	*/
 	public int[] getPointer(){
 		return Arrays.copyOf(this.pointer, 2);
+	}
+	/**
+	Finds the indexes of the first instance of Item i 
+	@param i - the item to find
+	@return 1D array of the location of Item i (first instance of it) indexes of format {row,col}
+	*/
+	public int[] find(Item i){
+		for(int r= 0;r<this.matrix.length;r++){
+			for(int j=0;j<this.matrix[0].length;j++){
+				if(this.matrix[r][j]==i){
+					return new int[]{r,j};
+				}
+			}
+		} 
+		return new int[]{};
+	}
+	/**
+	Finds the indexes of the all instances of Item i <br>
+	Note: Very memory inefficient on very large matrixes
+	@param i - the item to find
+	@return 2D array of the location of Item i (every instance of it) indexes of format {row,col}
+	2D array has lengths of number of instances of i and 2 respectively
+	*/
+	public int[][] findAll(Item i){
+		//very large memory usage if array is large
+		//switch to arraylist(vector) to better optimize memory usage
+		int[][] allInstances= new int[this.size[0]*this.size[1]][2];
+		for(int[] row:allInstances){
+			Arrays.fill(row, -1);
+
+		}
+		int indexOfAllInstances = 0;
+		for(int r= 0;r<this.matrix.length;r++){
+			for(int c=0;c<this.matrix[0].length;c++){
+				if(this.matrix[r][c]==i){
+					allInstances[indexOfAllInstances][0] = r;
+					allInstances[indexOfAllInstances][1] = c;
+					indexOfAllInstances++;
+				}
+			}
+		}
+		int endIndexOfNullItems = 0;
+		for(int index =0;index<allInstances.length;index++){
+			if(allInstances[index][0]==-1){
+				endIndexOfNullItems = index;
+				break;
+			}
+		}
+		return Arrays.copyOfRange(allInstances, 0, endIndexOfNullItems);
 	}
 	public String toString(){
 		String str = "";
@@ -297,7 +488,7 @@ public class GrowingMatrix<Item>{
 		this.size[1] = this.matrix[0].length;
 	}
 	public static void main(String[] args) {
-		//size and pointer still broke
+		//testing
 		Integer[][] x= {{1,2,3},{4,5,6}};
 		GrowingMatrix<Integer> gm = new GrowingMatrix<Integer>(x,1);
 		gm.setPointer(new int[]{0,0});
@@ -306,8 +497,8 @@ public class GrowingMatrix<Item>{
 		GrowingMatrix<Integer> y = gm.clone();
 		y.addItem(0, 1, 1);
 		System.out.println(gm);
-		System.out.println(y);
-		System.out.println(gm.equals(y));
-		//System.out.print(Arrays.deepToString(gm.getMatrix()));
+		gm.setAllNullTo(0);
+		Integer[] a = gm.get(new int[][]{{0,1},{2,2}});
+		System.out.println(gm);
 	}
 }
