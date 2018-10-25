@@ -4,9 +4,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 /**
+ * Main purpose is debugging and testing 
  * credit to michal.kreuzman from https://stackoverflow.com/questions/4965335/how-to-print-binary-tree-diagram
  * base of this printer for BST is from him
- * Main use is for testing 
+ * 
  *
  * @param <Key>
  * @param <Value>
@@ -67,7 +68,7 @@ public class PrettyTreePrint<Key extends Comparable<Key>, Value, BTree  extends 
                 }
 
                 if (nodes.get(j).left != null)
-                    System.out.print(" /");
+                    System.out.print("/");
                 else
                     this.printWhitespaces(1);
 

@@ -1,6 +1,6 @@
 package MatrixDataStructures;
 import java.lang.reflect.Array;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -274,29 +274,20 @@ public class Matrix<Item> implements Iterable<Item>{
 	public int[][] findAll(Item i){
 		//very large memory usage if array is large
 		//switch to arraylist(vector) to better optimize memory usage
-		int[][] allInstances= new int[this.size[0]*this.size[1]][2];
+		ArrayList<int[]> allInstances = new ArrayList<int[]>();
 		for(int[] row:allInstances){
 			Arrays.fill(row, -1);
 
 		}
-		int indexOfAllInstances = 0;
 		for(int r= 0;r<this.matrix.length;r++){
 			for(int c=0;c<this.matrix[0].length;c++){
 				if(this.matrix[r][c]==i){
-					allInstances[indexOfAllInstances][0] = r;
-					allInstances[indexOfAllInstances][1] = c;
-					indexOfAllInstances++;
+					allInstances.add(new int[]{r,c});
 				}
 			}
 		}
-		int endIndexOfNullItems = 0;
-		for(int index =0;index<allInstances.length;index++){
-			if(allInstances[index][0]==-1){
-				endIndexOfNullItems = index;
-				break;
-			}
-		}
-		return Arrays.copyOfRange(allInstances, 0, endIndexOfNullItems);
+		int [][] allInstancesA = new int[allInstances.size()][2];
+		return allInstances.toArray(allInstancesA);
 	}
 	//item must be a multiplable type
 	public Matrix<Double> multiply(Matrix<Double> other){

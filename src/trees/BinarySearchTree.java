@@ -175,11 +175,11 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Tre
 	
 	private List<TreeNode<Key,Value>> preOrder(TreeNode<Key, Value> curNode){
 		ArrayList<TreeNode<Key,Value>> list = new ArrayList<TreeNode<Key,Value>>();
-		if(root==null) 
-	            return list;
-        list.add(root);
-        list.addAll(preOrder(root.left));
-        list.addAll(preOrder(root.right));
+		if(curNode==null) 
+	         return list;
+        list.add(curNode);
+        list.addAll(preOrder(curNode.left));
+        list.addAll(preOrder(curNode.right));
         return list;
 	}
 	public List<TreeNode<Key,Value>> inOrder(){

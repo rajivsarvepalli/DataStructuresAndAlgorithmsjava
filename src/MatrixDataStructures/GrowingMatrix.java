@@ -1,8 +1,7 @@
 package MatrixDataStructures;
-import java.lang.reflect.Array;
+
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 /**
 @author Rajiv Sarvepalli<br>
 @Description
@@ -20,7 +19,11 @@ Features - a pointer to point to value that updates to continue to point to the 
 -even has a get method that uses python like list indexing to return portions of array <br> 
 -getSize() method to get size of matrix <br>
 -equals() and clone() are implemented, equals just checks if matrixes, pointers, and growthFactor are equal <br>
--optional equals methods are implemented, one ignores pointer variable and one ignores growthFactor and pointer variables
+-optional equals methods are implemented, one ignores pointer variable and one ignores growthFactor and pointer variables <br>
+Worst case RunTimes:<br>
+insert - O(mn)
+Usual indexing (get(int[] index)) - O(1)
+find, findAll - O(nm)
 */
 //could change to extend matrix then cut out methods like get, iterate
 //or leave as is

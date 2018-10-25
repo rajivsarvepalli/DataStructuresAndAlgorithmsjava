@@ -1,5 +1,6 @@
 package MatrixDataStructures;
 import java.lang.reflect.Array;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -19,6 +20,10 @@ Features - a pointer to point to value that updates to continue to point to the 
 -get size method to get size of matrix <br>
 -equals and clone are implemented, equals just checks if matrixes, pointers, and growthFactor are equal <br>
 -optional equals method is implemented that ignores pointer and one that ignores growthFactor and pointer
+Worst case RunTimes:<br>
+insert - O(mn)
+Usual indexing (get(int[] index)) - O(1)
+find, findAll - O(nm)
 */
 public class Growing2DArray<Item> implements Iterable<Item>{
 	//grows in any way you want (negative too) 
