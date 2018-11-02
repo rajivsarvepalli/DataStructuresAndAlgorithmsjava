@@ -1,4 +1,4 @@
-# A Collection of My Implemnetations of Data Strctures and Algorithsm in Java
+# A Collection of My Implementations of Data Structures and Algorithms in Java
   This repository contains all my personal java Data Structures and Algorithms. Many of these are already included the java standard libraries but were created for the purpose of learning. However, several of these files were created out of necessity for certain projects I was working on. Many of the files are documented, however, the degree of documentation varies heavily. Some of the data structures and algorithms this project contains are lists, trees, sorting algorithms, etc.  
 ### Prerequisites
 
