@@ -16,5 +16,5 @@ import java.util.ArrayList;
 
 ## Authors
 
-* **Rajiv Sarvepalli** - *Created and Owns* - [RajivKing6](https://github.com/rajivking6)
+* **Rajiv Sarvepalli** - *Created and Owns* - [rajivsarvepalli](https://github.com/rajivsarvepalli)
 
